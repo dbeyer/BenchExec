@@ -32,51 +32,51 @@ const isTestEnv = process.env.NODE_ENV === "test";
 const titleColWidth = window.innerWidth * 0.15;
 
 const renderTooltip = (cell) =>
-    Object.keys(cell)
+  Object.keys(cell)
     .filter((key) => cell[key] && key !== "sum")
     .map((key) => `${key}: ${cell[key]}`)
     .join(", ") || undefined;
 
 const StatisticsTable = ({
-    selectColumn,
-    tools,
-    switchToQuantile,
-    hiddenCols,
-    tableData,
-    onStatsReady,
-    stats: defaultStats,
-    filtered = false,
+  selectColumn,
+  tools,
+  switchToQuantile,
+  hiddenCols,
+  tableData,
+  onStatsReady,
+  stats: defaultStats,
+  filtered = false,
 }) => {
     // We want to skip stat calculation in a test environment if not
     // specifically wanted (signaled by a passed onStatsReady callback function)
-    const skipStats = isTestEnv && !onStatsReady;
+  const skipStats = isTestEnv && !onStatsReady;
 
-    // When filtered, initialize with empty statistics until computed statistics
-    // are available in order to prevent briefly showing the wrong statistics.
-    const [stats, setStats] = useState(filtered ? [] : defaultStats);
-    const [isTitleColSticky, setTitleColSticky] = useState(true);
+  // When filtered, initialize with empty statistics until computed statistics
+  // are available in order to prevent briefly showing the wrong statistics.
+  const [stats, setStats] = useState(filtered ? [] : defaultStats);
+  const [isTitleColSticky, setTitleColSticky] = useState(true);
 
-    // we want to trigger a re-calculation of our stats whenever data changes.
-    useEffect(() => {
-        const updateStats = async() => {
-            if (filtered) {
-                const newStats = await computeStats({
-                    tools,
-                    tableData,
-                    stats: defaultStats,
-                });
-                setStats(newStats);
-            } else {
-                setStats(defaultStats);
-            }
-            if (onStatsReady) {
-                onStatsReady();
-            }
-        };
-        if (!skipStats) {
-            updateStats(); // necessary such that hook is not async
+  // we want to trigger a re-calculation of our stats whenever data changes.
+  useEffect(() => {
+    const updateStats = async() => {
+        if (filtered) {
+            const newStats = await computeStats({
+                tools,
+                tableData,
+                stats: defaultStats,
+            });
+            setStats(newStats);
+        } else {
+            setStats(defaultStats);
         }
-    }, [tools, tableData, onStatsReady, skipStats, defaultStats, filtered]);
+        if (onStatsReady) {
+            onStatsReady();
+        }
+    };
+    if (!skipStats) {
+        updateStats(); // necessary such that hook is not async
+    }
+}, [tools, tableData, onStatsReady, skipStats, defaultStats, filtered]);
 
     const renderTableHeaders = (headerGroups) => ( <
         div className = "table-header" > {
@@ -97,14 +97,14 @@ const StatisticsTable = ({
                                 className = { `resizer ${header.isResizing ? "isResizing" : ""}` }
                                 />
                             )
-                        } <
-                        /div>
+                        } 
+                        </div>
                     ))
-                } <
-                /div>
+                } 
+                </div>
             ))
-        } <
-        /div>
+        } 
+        </div>
     );
 
     const renderTableData = (rows) => ( <
@@ -119,38 +119,35 @@ const StatisticsTable = ({
                             div {...cell.getCellProps({
                                     className: "td " + (cell.column.className || ""),
                                 })
-                            } > { cell.render("Cell") } <
-                            /div>
+                            } > { cell.render("Cell") } 
+                            </div>
                         ))
-                    } <
-                    /div>
+                    } 
+                    </div>
                 );
             })
-        } <
-        /div>
+        } 
+        </div>
     );
 
     const renderTable = (headerGroups, rows) => {
         if (filtered && stats.length === 0) {
-            return ( <
-                p id = "statistics-placeholder" >
+            return ( 
+                <p id = "statistics-placeholder" >
                 Please wait
-                while the statistics are being calculated. <
-                /p>
+                while the statistics are being calculated. 
+                </p>
             );
         }
-        return ( <
-            div id = "statistics-table" >
-            <
-            div className = "table sticky" >
-            <
-            div className = "table-content" >
-            <
-            div className = "table-container" {...getTableProps() } > { renderTableHeaders(headerGroups) } { renderTableData(rows) } <
-            /div> < /
-            div > <
-            /div> < /
-            div >
+        return ( 
+            <div id = "statistics-table" >
+            <div className = "table sticky" >
+            <div className = "table-content" >
+            <div className = "table-container" {...getTableProps() } > { renderTableHeaders(headerGroups) } { renderTableData(rows) } 
+            </div> 
+            </div > 
+            </div> 
+            </div >
         );
     };
 
@@ -180,7 +177,7 @@ const StatisticsTable = ({
                 minWidth: 30,
                 accessor: (row) => row.content[runSetIdx][columnIdx],
                 Cell: (cell) => {
-                    let valueToRender = cell.value ? .sum;
+                    let valueToRender = cell.value ? .sum ;
                     // We handle status differently as the main aggregation (denoted "sum")
                     // is of type "count" for this column type.
                     // This means that the default value if no data is available is 0
@@ -211,31 +208,27 @@ const StatisticsTable = ({
                         title = {
                             column.type !== "status" ? renderTooltip(cell.value) : undefined
                         } >
-                        <
-                        /div>
-                    ) : ( <
-                        div className = "cell" > - < /div>
+                        </div>
+                    ) : ( 
+                    <div className = "cell" > - </div>
                     );
                 },
             });
 
         const createRowTitleColumn = () => ({
-            Header: () => ( <
-                form >
-                <
-                label title = "Fix the first column" >
+            Header: () => ( 
+                <form>
+                <label title = "Fix the first column" >
                 Fixed row title:
-                <
-                input id = "fixed-row-title"
+                <input id = "fixed-row-title"
                 name = "fixed"
                 type = "checkbox"
                 checked = { isTitleColSticky }
                 onChange = {
                     ({ target }) => setTitleColSticky(target.checked)
-                }
-                /> < /
-                label > <
-                /form>
+                }/> 
+                </label>
+                </form>
             ),
             id: "row-title",
             sticky: isTitleColSticky ? "left" : "",
@@ -272,7 +265,7 @@ const StatisticsTable = ({
             id: `status_${status}`,
             Header: status.toUpperCase(),
             accessor: (row) => row.satusCounts ? .[status] || 0,
-            cell: (cell) => < div > { cell.value } < /div>
+            cell: (cell) => < div > { cell.value } </div>
         }));
         const statColumns = tools
             .map((runSet, runSetIdx) =>
@@ -310,11 +303,10 @@ const StatisticsTable = ({
         useSticky,
     );
 
-    return ( <
-        div id = "statistics" >
-        <
-        h2 > Statistics < /h2> { renderTable(headerGroups, rows) } < /
-        div >
+    return ( 
+        <div id = "statistics" >
+        <h2> Statistics </h2> { renderTable(headerGroups, rows) }
+        </div>
     );
 };
 
